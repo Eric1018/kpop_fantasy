@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
+  --background: #FFE4E1;
   --foreground: #171717;
 }
 
@@ -14,8 +14,34 @@
   }
 }
 
+.logo{
+  font-size: 12px;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: serif;
+  font-weight: 500; /* 加粗但不會過頭，範圍 400-900 */
+  color: #111; /* 比純黑 (#000) 略淡，避免太刺眼 */
+  /* 清除 opacity 以及 transition 屬性 */
+  opacity: 1; /* 頁面載入時保持不透明 */
+  transition: none; /* 不再有過渡動畫 */
 }
+
+:where(.ant-menu-light .ant-menu-item-selected) {
+  @apply bg-purple-200 text-purple-700 !important;
+}
+
+:where(.ant-menu-light .ant-menu-item:hover) {
+  @apply bg-purple-100 text-purple-600 !important;
+}
+
+:where(.ant-menu-light .ant-menu-submenu-selected) {
+  @apply text-purple-700 font-bold !important;
+}
+
+:where(.ant-menu-light .ant-menu-submenu-selected) > .ant-menu-submenu-title {
+  @apply text-purple-700 !important;
+}
+
