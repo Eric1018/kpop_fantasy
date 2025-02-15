@@ -4,12 +4,20 @@ import { useEffect, useState } from "react";
 
 export default function UserTable() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const user_name = localStorage.getItem("user_name");
+  const [user_name, setUserName] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [dataSource, setDataSource] = useState([]);
   const [balance, setBalance] = useState(0);
 
-  // 🚀 獲取用戶的卡片數據
+  // 🚀 Ensure localStorage is only used in the client-side environment
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedUserName = localStorage.getItem("user_name");
+      setUserName(storedUserName);
+    }
+  }, []);
+
+  // 🚀 Get user card data
   const fetchData = async () => {
     if (!user_name) return;
 
@@ -23,7 +31,7 @@ export default function UserTable() {
     }
   };
 
-  // 🚀 取得當前 balance
+  // 🚀 Get current balance
   const fetchBalance = async () => {
     if (!user_name) return;
 
@@ -41,24 +49,26 @@ export default function UserTable() {
   };
 
   useEffect(() => {
-    fetchBalance();
-    fetchData();
-  }, []);
+    if (user_name) {
+      fetchBalance();
+      fetchData();
+    }
+  }, [user_name]);
 
-  // 🗑️ 賣出卡片（刪除 + 更新 balance）
+  // 🗑️ Sell card (delete and update balance)
   const handleSell = async (id, price) => {
     try {
-      // 1️⃣ 計算新餘額
+      // 1️⃣ Calculate new balance
       const newBalance = balance + price;
 
-      // 2️⃣ 刪除該卡片
+      // 2️⃣ Delete the card
       const deleteRes = await fetch(`${API_URL}/api/userCards/${id}`, {
         method: "DELETE",
       });
 
       if (!deleteRes.ok) throw new Error("Failed to delete card");
 
-      // 3️⃣ 更新最新的 balance
+      // 3️⃣ Update balance
       const updateRes = await fetch(`${API_URL}/api/purchase/updateBalance`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -67,7 +77,7 @@ export default function UserTable() {
 
       if (!updateRes.ok) throw new Error("Failed to update balance");
 
-      // 4️⃣ 更新前端顯示
+      // 4️⃣ Update frontend display
       setBalance(newBalance);
       setDataSource((prev) => prev.filter((card) => card.id !== id));
 

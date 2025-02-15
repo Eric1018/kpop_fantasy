@@ -19,13 +19,20 @@ export default function Card() {
   const [form] = useForm();
   const router = useRouter();
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10, showSizeChanger: true });
+  const [userName, setUserName] = useState(null);
+
+  useEffect(() => {
+    const storedUserName = localStorage.getItem("user_name");
+    if (storedUserName) {
+      setUserName(storedUserName);
+    }
+  }, []);
 
   const fetchBalance = async () => {
-    const user_name = localStorage.getItem("user_name");
-    if (!user_name) return;
+    if (!userName) return;
 
     try {
-      const res = await fetch(`${API_URL}/api/purchase/balance/${user_name}`);
+      const res = await fetch(`${API_URL}/api/purchase/balance/${userName}`);
       const data = await res.json();
       if (res.ok) {
         setBalance(data.balance);
@@ -49,9 +56,11 @@ export default function Card() {
   };
 
   useEffect(() => {
-    fetchBalance();
+    if (userName) {
+      fetchBalance();
+    }
     fetchData();
-  }, []);
+  }, [userName]);
 
   useEffect(() => {
     setFilteredData(dataSource);
@@ -60,8 +69,7 @@ export default function Card() {
   const handlePurchase = async (row) => {
     if (isPurchasing) return;
 
-    const user_name = localStorage.getItem("user_name");
-    if (!user_name) {
+    if (!userName) {
       window.alert("Please log in first!");
       return;
     }
@@ -73,7 +81,7 @@ export default function Card() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          user_name,
+          user_name: userName,
           name: row.name,
           photo: row.photo,
           group: row.group,

@@ -15,17 +15,20 @@ export default function LayoutComponent({ children }) {
   const pathname = usePathname();
   const [userName, setUserName] = useState(null);
 
+  // 🚀 Ensure localStorage is only used in the client-side environment
   useEffect(() => {
-    const updateUserName = () => {
-      setUserName(localStorage.getItem("user_name"));
-    };
+    if (typeof window !== 'undefined') {
+      const updateUserName = () => {
+        setUserName(localStorage.getItem("user_name"));
+      };
 
-    updateUserName();
-    window.addEventListener("storage", updateUserName);
+      updateUserName();
+      window.addEventListener("storage", updateUserName);
 
-    return () => {
-      window.removeEventListener("storage", updateUserName);
-    };
+      return () => {
+        window.removeEventListener("storage", updateUserName);
+      };
+    }
   }, []);
 
   const USER_ITEMS = [
@@ -34,10 +37,12 @@ export default function LayoutComponent({ children }) {
       label: (
         <span
           onClick={() => {
-            localStorage.removeItem("user_name");
-            setUserName(null);
-            message.success("Successful logout");
-            router.push("/login");
+            if (typeof window !== 'undefined') {
+              localStorage.removeItem("user_name");
+              setUserName(null);
+              message.success("Successful logout");
+              router.push("/login");
+            }
           }}
         >
           Log Out
