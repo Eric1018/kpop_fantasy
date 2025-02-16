@@ -1,6 +1,6 @@
 'use client'
 import { createClient } from "@supabase/supabase-js";
-import { Button, Form, Input, message, Popconfirm, Table } from "antd";
+import { Button, Form, Input, message, Popconfirm, Select, Space, Table } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -20,6 +20,7 @@ export default function Card() {
   const router = useRouter();
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10, showSizeChanger: true });
   const [userName, setUserName] = useState(null);
+  const [selectedImage, setSelectedImage] = useState()
 
   useEffect(() => {
     const storedUserName = localStorage.getItem("user_name");
@@ -150,7 +151,7 @@ export default function Card() {
 
   const columns = [
     { title: 'Name', dataIndex: 'name', key: 'name', width: 180 },
-    { title: 'Photo', dataIndex: 'photo', key: 'photo', width: 120, render: (text) => text ? <img width={50} height={50} alt="" src={text} /> : null },
+    { title: 'Photo', dataIndex: 'photo', key: 'photo', width: 120, render: (text) => text ? <img width={50} height={50} alt="" className="cursor-pointer" onClick={() => setSelectedImage(text)} onError={(e) => (e.currentTarget.style.display = "none")}  src={text} /> : null },
     { title: 'Group', dataIndex: 'group', key: 'group', width: 150 },
     { title: 'Debut Year', dataIndex: 'debutyear', key: 'debutyear', width: 150 },
     { title: 'Position', dataIndex: 'position', key: 'position', width: 150 },
@@ -182,12 +183,89 @@ export default function Card() {
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        <Form name="search" form={form} layout="inline" onFinish={handleSearchFinish}>
-          <Form.Item name="name" label="Name"><Input placeholder="Please Input" allowClear /></Form.Item>
+ {/* 🔍 搜尋表單 */}
+        <Form
+          name="search"
+          form={form}
+          layout="inline"
+          onFinish={handleSearchFinish}
+          initialValues={{ name: "", group: "", position: null }}
+        >
+          <Form.Item name="name" label="Name">
+            <Input
+              placeholder="Please Input"
+              allowClear
+              onChange={(e) => {
+                if (!e.target.value) {
+                  form.setFieldsValue({ name: "" }); // 清空搜尋條件
+                  handleSearchFinish(form.getFieldsValue()); // 重新執行搜尋
+                }
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item name="group" label="Group">
+            <Input
+              placeholder="Please Input"
+              allowClear
+              onChange={(e) => {
+                if (!e.target.value) {
+                  form.setFieldsValue({ group: "" });
+                  handleSearchFinish(form.getFieldsValue());
+                }
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item name="position" label="Position">
+            <Select
+              allowClear
+              showSearch
+              placeholder="Please Select"
+              options={[
+                { value: 'Main vocal', label: "Main vocal" },
+                { value: 'Lead vocal', label: "Lead vocal" },
+                { value: 'Sub vocal', label: "Sub vocal" },
+                { value: 'Main dancer', label: "Main dancer" },
+                { value: 'Lead dancer', label: "Lead dancer" },
+                { value: 'Main rapper', label: "Main rapper" },
+                { value: 'Lead rapper', label: "Lead rapper" },
+                { value: 'Sub rapper', label: "Sub rapper" },
+                { value: 'Visual', label: "Visual" },
+              ]}
+              onChange={(value) => {
+                if (!value) {
+                  form.setFieldsValue({ position: null });
+                  handleSearchFinish(form.getFieldsValue());
+                }
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item>
+            <Space>
+              <Button type="primary" htmlType="submit">
+                Search
+              </Button>
+              <Button htmlType="button" onClick={handleSearchReset}>
+                Clear / Resort
+              </Button>
+            </Space>
+          </Form.Item>
         </Form>
         <div className="text-black font-bold text-lg">Balance: ${balance}</div>
       </div>
-      <Table className='overflow-auto h-[calc(100vh-190px)]' dataSource={filteredData.length > 0 ? filteredData : dataSource} columns={columns} onChange={handleTableChange} />
+      <Table className='overflow-auto h-[calc(100vh-190px)]' 
+      dataSource={filteredData.length > 0 ? filteredData : dataSource} columns={columns} onChange={handleTableChange} />
+      {/* 📸 放大圖片的 Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md z-50"
+          onClick={() => setSelectedImage(null)} // 點擊背景關閉
+        >
+          <img src={selectedImage} alt="Preview" width={300} height={400} className="object-cover rounded-lg" />
+        </div>
+      )}
     </>
   );
 }
