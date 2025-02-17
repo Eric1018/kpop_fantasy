@@ -1,5 +1,6 @@
 'use client'
 import { motion } from "framer-motion";
+import Head from "next/head";
 import Image from 'next/image';
 import { useRouter } from "next/navigation";
 
@@ -8,6 +9,9 @@ export default function Home() {
 
   return (
     <div className="relative w-full h-screen flex flex-col justify-center items-center text-white overflow-hidden font-[Poppins]">
+      <Head>
+        <title>Kpop_Fantasy</title>
+      </Head>
       {/* 背景圖片 (用 next/image) */}
       <div className="absolute inset-0 bg-black/30 z-[-1]">
         <Image
