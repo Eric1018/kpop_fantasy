@@ -118,10 +118,12 @@ export default function Card() {
       if (!res.ok) throw new Error(`Failed to delete: ${res.statusText}`);
 
       message.success("Deleted successfully");
+      window.alert("Deleted successfully")
       setDataSource(prev => prev.filter(item => item.id !== row.id));
       setFilteredData(prev => prev.filter(item => item.id !== row.id));
     } catch (error) {
       message.error("Failed to delete data");
+      window.alert("Failed to delete data. Please try again")
     }
   };
 
@@ -150,34 +152,54 @@ export default function Card() {
   };
 
   const columns = [
-    { title: 'Name', dataIndex: 'name', key: 'name', width: 180 },
-    { title: 'Photo', dataIndex: 'photo', key: 'photo', width: 120, render: (text) => text ? <img width={50} height={50} alt="" className="cursor-pointer" onClick={() => setSelectedImage(text)} onError={(e) => (e.currentTarget.style.display = "none")}  src={text} /> : null },
-    { title: 'Group', dataIndex: 'group', key: 'group', width: 150 },
-    { title: 'Debut Year', dataIndex: 'debutyear', key: 'debutyear', width: 150 },
-    { title: 'Position', dataIndex: 'position', key: 'position', width: 150 },
-    { title: 'MBTI', dataIndex: 'mbti', key: 'mbti', width: 150 },
-    { title: 'Price', dataIndex: 'price', key: 'price', width: 120 },
+    { title: 'Name', dataIndex: 'name', key: 'name', align: "center" },
+    { 
+      title: 'Photo', 
+      dataIndex: 'photo', 
+      key: 'photo', 
+      align: "center",
+      render: (text) => text ? (
+        <img 
+          width={50} 
+          height={50} 
+          alt="" 
+          className="cursor-pointer mx-auto"
+          onClick={() => setSelectedImage(text)} 
+          onError={(e) => (e.currentTarget.style.display = "none")}  
+          src={text} 
+        />
+      ) : null 
+    },
+    { title: 'Group', dataIndex: 'group', key: 'group', align: "center" },
+    { title: 'Debut Year', dataIndex: 'debutyear', key: 'debutyear', align: "center",width: 120, },
+    { title: 'Position', dataIndex: 'position', key: 'position', align: "center",width: 120 },
+    { title: 'MBTI', dataIndex: 'mbti', key: 'mbti', align: "center" },
+    { title: 'Price', dataIndex: 'price', key: 'price', align: "center" },
     {
       title: 'Purchase',
       key: 'purchase',
+      align: "center",
+      width: 80,
       render: (_, row) => (
         <Button type="link" onClick={() => handlePurchase(row)} disabled={isPurchasing}>
           {isPurchasing ? "Processing..." : "Purchase"}
         </Button>
       ),
     },
-    {
+    ...(userName === "admin109306086" ? [{
       title: 'Action',
       key: 'action',
+      align: "center",
+      width: 80,
       render: (_, row) => (
-        <div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
           <Button type="link" onClick={() => handleEdit(row)}>Edit</Button>
           <Popconfirm title="Are you sure to delete this card?" onConfirm={() => handleDelete(row)} okText="Yes" cancelText="No">
             <Button type="link" danger>Delete</Button>
           </Popconfirm>
         </div>
       ),
-    },
+    }] : []),
   ];
 
   return (

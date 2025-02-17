@@ -1,6 +1,6 @@
 'use client'
 import { createClient } from '@supabase/supabase-js';
-import { Button, Form, Input, message, Select } from 'antd';
+import { Button, Form, Input, message, Modal, Select } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -14,8 +14,17 @@ const BookForm = () => {
   const [preview, setPreview] = useState("");
   const [form] = Form.useForm();
   const [photo, setPhoto] = useState(""); 
+  const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
+  const [password, setPassword] = useState("");
 
   const handleFinish = async (values) => {
+    if (password !== "109306086") {
+      message.error("Incorrect password! Please try again.");
+      window.alert("Incorrect password! Please try again.")
+      setPassword("")
+      return;
+    }
+
     console.log("提交的資料:", values);
 
     const { error } = await supabase.from("kpop_fantasy").insert([values]);
@@ -24,12 +33,19 @@ const BookForm = () => {
       message.error("提交失敗：" + error.message);
       console.error(error);
     } else {
-      window.alert("The new record has been successfully created!");
+      message.success("The new record has been successfully created!");
+      window.alert("The new record has been successfully created!")
       router.push("/card");
       form.resetFields();
       setPhoto("");
       setPreview("");
+      setPassword(""); // 清除密碼
     }
+  };
+
+  const handleCreateClick = () => {
+    setIsPasswordModalVisible(true);
+    setPassword("");
   };
 
   return (
@@ -43,11 +59,7 @@ const BookForm = () => {
           layout="horizontal"
           onFinish={handleFinish}
         >
-          <Form.Item 
-            label="Name" 
-            name="name"
-            rules={[{ required: true, message: "Please enter the name" }]}
-          >
+          <Form.Item label="Name" name="name" rules={[{ required: true, message: "Please enter the name" }]}>
             <Input placeholder="Please Input" />
           </Form.Item>
 
@@ -79,27 +91,15 @@ const BookForm = () => {
             {preview && (<img src={preview} alt="" width="200" height="200" />)}
           </Form.Item>
 
-          <Form.Item 
-            label="Group" 
-            name="group"
-            rules={[{ required: true, message: "Please enter the group" }]}
-          >
+          <Form.Item label="Group" name="group" rules={[{ required: true, message: "Please enter the group" }]}>
             <Input placeholder="Please Input" />
           </Form.Item>
 
-          <Form.Item 
-            label="Debut Year" 
-            name="debutyear"
-            rules={[{ required: true, message: "Please enter the debut year" }]}
-          >
+          <Form.Item label="Debut Year" name="debutyear" rules={[{ required: true, message: "Please enter the debut year" }]}>
             <Input placeholder="Please Input" />
           </Form.Item>
 
-          <Form.Item 
-            label="Position" 
-            name="position"
-            rules={[{ required: true, message: "Please select a position" }]}
-          >
+          <Form.Item label="Position" name="position" rules={[{ required: true, message: "Please select a position" }]}>
             <Select placeholder="Please Select">
               <Select.Option value="Main vocal">Main vocal</Select.Option>
               <Select.Option value="Lead vocal">Lead vocal</Select.Option>
@@ -113,27 +113,42 @@ const BookForm = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item 
-            label="MBTI" 
-            name="mbti"
-            rules={[{ required: true, message: "Please enter the MBTI type" }]}
-          >
+          <Form.Item label="MBTI" name="mbti" rules={[{ required: true, message: "Please enter the MBTI type" }]}>
             <Input placeholder="Please Input" />
           </Form.Item>
 
-          <Form.Item 
-            label="Price" 
-            name="price"
-            rules={[{ required: true, message: "Please enter the price" }]}
-          >
+          <Form.Item label="Price" name="price" rules={[{ required: true, message: "Please enter the price" }]}>
             <Input placeholder="Please Input" />
           </Form.Item>
 
           <Form.Item className="ml-[140px] text-center mt-10">
-            <Button size='large' type="primary" htmlType="submit">Create</Button>
+            <Button size='large' type="primary" onClick={handleCreateClick}>Create</Button>
           </Form.Item>
         </Form>
       </div>
+
+      {/* 密碼輸入 Modal */}
+      <Modal
+        title="Enter Password"
+        open={isPasswordModalVisible}
+        onOk={() => {
+          if (password !== "109306086") {
+            message.error("Incorrect password! Please try again.");
+            window.alert("Incorrect password! Please try again.");
+            setPassword(""); // 清空密碼欄位
+            return; // 不關閉 Modal
+          }
+          setIsPasswordModalVisible(false); // 密碼正確時關閉
+          form.submit();
+        }}
+        onCancel={() => setIsPasswordModalVisible(false)}
+      >
+        <Input.Password
+          placeholder="Enter password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </Modal>
     </>
   );
 };
