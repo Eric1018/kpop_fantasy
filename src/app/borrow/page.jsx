@@ -16,12 +16,46 @@ const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)
 
 const generateRandomEvents = () => {
   const eventList = [
-    'Became the first K-pop girl group to headline the Grammys',
-    'Achieved 100 million album sales worldwide, setting a new record',
-    'A single became the most-streamed song of all time on Spotify',
-    'Won a historic Daesang sweep at the year-end music awards',
-    'Caught in a major tax evasion scandal, leading to government investigation'
-  ];
+    "Became the first K-pop act to perform at the Super Bowl halftime show",
+    "Featured on the cover of TIME magazine as the 'Leaders of Global Pop'",
+    "Invited to the White House for a special cultural exchange event",
+    "Became the first K-pop artist to win a BRIT Award",
+    "Ranked #1 on Billboard Hot 100 for a record-breaking 10 weeks",
+    "Made history as the first K-pop soloist to headline Coachella",
+    "Signed a multi-million dollar deal with a luxury fashion brand",
+    "Collaborated with a global pop star for an international hit single",
+    "Became a United Nations goodwill ambassador for youth empowerment",
+    "Performed at the opening ceremony of the Olympics",
+    "Broke the Guinness World Record for the fastest MV to reach 100 million views",
+    "Named as one of Forbes' '30 Under 30' in the music industry",
+    "Released a successful documentary that topped global streaming charts",
+    "Starred in a Hollywood movie, receiving praise for acting skills",
+    "Became the most-followed K-pop idol on Instagram",
+    "Won 'Best International Artist' at the MTV Europe Music Awards",
+    "Hosted a popular variety show that became a cultural phenomenon",
+    "Opened a personal YouTube channel, gaining millions of subscribers instantly",
+    "Launched a successful fashion brand with global sales",
+    "Published a bestselling autobiography about their journey in the industry",
+    "Became the ambassador of a global sports brand",
+    "Featured in a Disney animated film as a voice actor",
+    "Received an honorary doctorate for contributions to music and culture",
+    "Became the first K-pop group to have a wax figure at Madame Tussauds",
+    "Held a successful world tour, selling out stadiums in multiple continents",
+    "Became the face of a high-end skincare brand, boosting global sales",
+    "Released a viral dance challenge that dominated social media",
+    "Became the first K-pop idol to perform on Broadway",
+    "Opened a charity foundation supporting education for underprivileged youth",
+    "Broke the record for the most pre-ordered album in K-pop history",
+    "Won 'Song of the Year' at an international music award show",
+    "Ranked among the world's highest-paid musicians by Billboard",
+    "Launched a perfume line that sold out within minutes",
+    "Guest-starred in a popular Netflix series, impressing audiences worldwide",
+    "Became an ambassador for UNICEF, advocating for children's rights",
+    "Performed at a royal event attended by global leaders",
+    "Created a viral fashion trend that influenced global designers",
+    "Received a special award for promoting Korean culture worldwide",
+    "Became the first K-pop group to have a theme park attraction dedicated to them"
+  ];  
   const datingEvent = 'Main vocalist exposed for dating non-celebrity boyfriend Derrick Hsu';
   const shuffledEvents = eventList.sort(() => 0.5 - Math.random()).slice(0, 8);
   return [datingEvent, ...shuffledEvents];
